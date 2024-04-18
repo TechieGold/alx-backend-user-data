@@ -115,3 +115,35 @@ class BasicAuth(Auth):
 
         except Exception:
             return None
+
+    def current_user(self, request=None) -> TypeVar('User'):
+        """
+        Get the current User instance based on the request.
+
+        Args:
+            request (flask.Request): The Flask request object.
+
+        Returns:
+            TypeVar('User'): The User instance, or None if not authenticated.
+        """
+        Auth_header: str = self.authorization_header(request)
+        if Auth_header is None:
+            return None
+
+        token: str = self.extract_base64_authorization_header(Auth_header)
+        if token is None:
+            return None
+
+        decoded: str = self.decode_base64_authorization_header(token)
+        if decoded is None:
+            return None
+
+        user_email: str
+        user_pwd: str
+        user_email, user_pwd = self.extract_user_credentials(decoded)
+        if user_email is None or user_pwd is None:
+            return None
+
+        current_user = self.user_object_from_credentials(user_email, user_pwd)
+
+        return current_user
