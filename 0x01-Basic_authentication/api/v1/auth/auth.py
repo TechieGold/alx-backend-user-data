@@ -4,22 +4,23 @@
 from flask import request
 from typing import TypeVar, List
 
+
 class Auth():
     """ Auth class encapsulating authentication-related functionality."""
 
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
-        """ 
+        """
         Determine whether authentication is required for a given path.
 
         Args:
             path (str): The path to check.
-            excluded_paths (List[str]): List of paths excluded from authentication.
+            excluded_paths (List[str]): List of paths excluded
+            from authentication.
 
         Returns:
             bool: True if authentication is required, False otherwise.
         """
         return False
-
 
     def authorization_header(self, request=None) -> str:
         """
@@ -34,7 +35,6 @@ class Auth():
         if request is None:
             request = request
         return None
-    
 
     def current_user(self, request=None) -> TypeVar('User'):
         """
