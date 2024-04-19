@@ -9,6 +9,7 @@ from models.user import User
 from api.v1.views import app_views
 from os import getenv
 
+
 @app_views.route('/auth_session/login', methods=['POST'], strict_slashes=False)
 def login():
     """ Handle user login with session authentication """
@@ -17,15 +18,15 @@ def login():
 
     if not email:
         return jsonify({"error": "email missing"}), 400
-    
+
     if not password:
         return jsonify({"error": "password missing"}), 400
-    
+
     users = User.search({"email": email})
 
     if not users:
         return jsonify({"error": "no user found for this email"}), 401
-    
+
     from api.v1.app import auth
     for user in users:
         if user.is_valid_password(password):
@@ -34,5 +35,5 @@ def login():
             resp = jsonify(user.to_json())
             resp.set_cookie(session_cookie_name, session_id)
             return resp
-        
+
     return jsonify({"error": "wrong password"}), 401
