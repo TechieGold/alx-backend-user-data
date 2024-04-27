@@ -41,7 +41,7 @@ class DB:
 
         return user
 
-    def find_user(self, **kwargs):
+    def find_user_by(self, **kwargs):
         """
         Return a user who has an attribute matching the attributes passed
         as argument
