@@ -54,3 +54,18 @@ class DB:
                 if getattr(user, key) == value:
                     return user
         raise NoResultFound
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """
+         Update a user's attributes based on provided arguments.
+        """
+        try:
+            user = self.find_user_by(id=user_id)
+        except NoResultFound:
+            raise ValueError()
+        for key, value in kwargs.items():
+            if hasattr(user, key):
+                setattr(user, key, value)
+            else:
+                raise ValueError
+        self._session.commit()
