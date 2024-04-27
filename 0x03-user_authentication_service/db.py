@@ -30,7 +30,7 @@ class DB:
             DBSession = sessionmaker(bind=self._engine)
             self.__session = DBSession()
         return self.__session
-    
+
     def add_user(self, email: str, hashed_password: str) -> User:
         """Create a User object and save it to the database
         """
@@ -39,7 +39,7 @@ class DB:
         self._session.commit()
 
         return user
-    
+
     def find_user(self, **kwargs):
         """
         Return a user who has an attribute matching the attributes passed
