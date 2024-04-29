@@ -42,9 +42,9 @@ def login() -> str:
 
     if not Auth.valid_login(email, password):
         abort(401)
-    session_id = Auth.create_session(email)
 
-    resp = make_response(jsonify({"email": email, "message": "logged in"}))
+    session_id = Auth.create_session(email)
+    resp = jsonify({"email": email, "message": "logged in"})
     resp.set_cookie("session_id", session_id)
 
     return resp
