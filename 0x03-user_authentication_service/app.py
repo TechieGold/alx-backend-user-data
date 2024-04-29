@@ -3,7 +3,12 @@
 Baic Flask app
 """
 from auth import Auth
-from flask import Flask, jsonify, request
+from flask import (Flask,
+                   jsonify,
+                   request,
+                   abort,
+                   make_response)
+import bcrypt
 
 app = Flask(__name__)
 Auth = Auth()
@@ -27,6 +32,22 @@ def users() -> str:
         return jsonify({"message": "email already registered"}), 400
 
     return jsonify({"email": f"{email}", "message": "user created"})
+
+
+@app.route("/sessions", methods=["POST"])
+def login():
+    """ Handle login request"""
+    email = request.form.get("email")
+    password = request.form.get("password")
+
+    if Auth.valid_login(email, password):
+        abort(401, "Invalid email or password")
+    session_id = Auth.create_session(email)
+
+    resp = make_response(jsonify({"email": email, "message": "logges in"}))
+    resp.set_cookie("session_id", session_id)
+
+    return resp
 
 
 if __name__ == "__main__":
