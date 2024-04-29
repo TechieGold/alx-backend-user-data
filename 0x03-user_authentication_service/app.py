@@ -34,14 +34,14 @@ def users() -> str:
     return jsonify({"email": f"{email}", "message": "user created"})
 
 
-@app.route("/sessions", methods=["POST"])
+@app.route("/sessions", methods=["POST"], strict_slashes=False)
 def login():
     """ Handle login request"""
     email = request.form.get("email")
     password = request.form.get("password")
 
-    if Auth.valid_login(email, password):
-        abort(401, "Invalid email or password")
+    if not Auth.valid_login(email, password):
+        abort(401)
     session_id = Auth.create_session(email)
 
     resp = make_response(jsonify({"email": email, "message": "logged in"}))
