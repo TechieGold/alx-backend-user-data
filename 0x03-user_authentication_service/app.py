@@ -44,7 +44,7 @@ def login():
         abort(401, "Invalid email or password")
     session_id = Auth.create_session(email)
 
-    resp = make_response(jsonify({"email": email, "message": "logges in"}))
+    resp = make_response(jsonify({"email": email, "message": "logged in"}))
     resp.set_cookie("session_id", session_id)
 
     return resp
