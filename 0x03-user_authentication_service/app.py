@@ -8,10 +8,9 @@ from flask import (Flask,
                    request,
                    abort,
                    redirect)
-import bcrypt
 
 app = Flask(__name__)
-Auth = Auth()
+AUTH = Auth()
 
 
 @app.route("/")
@@ -36,31 +35,33 @@ def users() -> str:
 
 @app.route("/sessions", methods=["POST"], strict_slashes=False)
 def login() -> str:
-    """ Handle login request"""
+    """
+    Log in a user if the credentials provided are correct, and create a new
+    session for them.
+    """
     email = request.form.get("email")
     password = request.form.get("password")
 
-    if not Auth.valid_login(email, password):
+    if not AUTH.valid_login(email, password):
         abort(401)
 
-    session_id = Auth.create_session(email)
-    resp = jsonify({"email": email, "message": "logged in"})
+    session_id = AUTH.create_session(email)
+    resp = jsonify({"email": f"{email}", "message": "logged in"})
     resp.set_cookie("session_id", session_id)
-
     return resp
 
 
-@app.route("/sessions", methods=["DELETE"])
+@app.route("/sessions", methods=["DELETE"], strict_slashes=False)
 def logout():
-    """Handle logout requests."""
-    session_id = request.cookies.get("session_id")
-    user = Auth.get_user_from_session_id(session_id)
-
-    if user:
-        Auth.destroy_session(user.id)
-        return redirect("/")
-    else:
+    """
+    Log out a logged in user and destroy their session
+    """
+    session_id = request.cookies.get("session_id", None)
+    user = AUTH.get_user_from_session_id(session_id)
+    if user is None or session_id is None:
         abort(403)
+    AUTH.destroy_session(user.id)
+    return redirect("/")
 
 
 if __name__ == "__main__":
