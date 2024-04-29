@@ -7,7 +7,7 @@ from flask import (Flask,
                    jsonify,
                    request,
                    abort,
-                   make_response)
+                   redirect)
 import bcrypt
 
 app = Flask(__name__)
@@ -48,6 +48,19 @@ def login() -> str:
     resp.set_cookie("session_id", session_id)
 
     return resp
+
+
+@app.route("/sessions", methods=["DELETE"])
+def logout():
+    """Handle logout requests."""
+    session_id = request.cookies.get("session_id")
+    user = Auth.get_user_from_session_id(session_id)
+
+    if user:
+        Auth.destroy_session(user.id)
+        return redirect("/")
+    else:
+        abort(403)
 
 
 if __name__ == "__main__":
